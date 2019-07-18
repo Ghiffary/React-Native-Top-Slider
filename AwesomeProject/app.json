@@ -30,10 +30,6 @@
     },
     "description": "[Ghiffary] update",
     "githubUrl": "https://github.com/Ghiffary/React-Native-Top-Slider.git"
-  },
-  "androidStatusBarColor": "#334393",
-  "androidStatusBar": {
-    "barStyle": "light-content",
-    "backgroundColor": "#334393"
   }
+  
 }

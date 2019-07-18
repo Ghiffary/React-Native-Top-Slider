@@ -22,18 +22,25 @@ import { Title,
   Left, 
   Body, 
   Right } from 'native-base';
+  import { createBottomTabNavigator, 
+         createAppContainer,
+         createStackNavigator, 
+         createSwitchNavigator,
+         createMaterialTopTabNavigator } from 'react-navigation';
   import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 // import Animated from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
+import Listview from './home/listview'
 
 
 
 
-export default function HomeScreen() {
+ export default function HomeScreen() {
   return (
     <Container>
     {/* <StatusBar backgroundColor="blue" barStyle="light-content" /> */}
+    <HeaderContoh/>
     <TabViewExample/>
     </Container>
     // <View style={styles.container}>
@@ -130,7 +137,10 @@ function HeaderContoh () {
 
   function SpaceHeader (){
     return (
-      <Header style={{backgroundColor:'#ccc'}}>
+      <Header style={{
+        backgroundColor:'#ccc',
+        height: 22
+        }}>
         
       </Header>
     );
@@ -268,25 +278,83 @@ HomeScreen.navigationOptions = {
 
 
 
+const FirstRoute = () => (
+  
+
+<Listview/>
+
+  
+);
+
+const SecondRoute = () => (
+  <View style={[stylesTab.scene, { backgroundColor: '#673ab7' }]} />
+);
+
+const OfferRoute = () => (
+  <View style={[stylesTab.scene, { backgroundColor: '#003cd9' }]} />
+);
+
+// This is our placeholder component for the tabs
+// This will be rendered when a tab isn't loaded yet
+// You could also customize it to render different content depending on the route
+const LazyPlaceholder = ({ route }) => (
+  <View style={stylesTab.scene}>
+    <Text>Loading {route.title}…</Text>
+  </View>
+);
+
+class TabViewExample extends React.Component {
+  state = {
+    index: 0,
+    routes: [
+      { key: 'first', title: 'Home' },
+      { key: 'second', title: 'Second' },
+      {key : 'offer', title : 'Offer'}
+    ]
+  };
+
+  _handleIndexChange = index => this.setState({ index });
+
+  _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
+
+  render() {
+    return (
+     <Container>
+      <TabView
+        lazy
+        navigationState={this.state}
+        renderScene={SceneMap({
+          first: FirstRoute,
+          second: SecondRoute,
+          offer: OfferRoute,
+        })}
+        renderLazyPlaceholder={this._renderLazyPlaceholder}
+        onIndexChange={this._handleIndexChange}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        style={stylesTab.container}
+      />
+      </Container>
+    );
+  }
+}
+
+const stylesTab = StyleSheet.create({
+  container: {
+    // marginTop: StatusBar.currentHeight,
+  },
+  scene: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+
 // const FirstRoute = () => (
-//   <View style={[stylesTab.scene, { backgroundColor: '#ff4081' }]} />
+//   <View style={[stylesTab.container, { backgroundColor: '#ff4081' }]} />
 // );
-
 // const SecondRoute = () => (
-//   <View style={[stylesTab.scene, { backgroundColor: '#673ab7' }]} />
-// );
-
-// const OfferRoute = () => (
-//   <View style={[stylesTab.scene, { backgroundColor: '#003cd9' }]} />
-// );
-
-// // This is our placeholder component for the tabs
-// // This will be rendered when a tab isn't loaded yet
-// // You could also customize it to render different content depending on the route
-// const LazyPlaceholder = ({ route }) => (
-//   <View style={stylesTab.scene}>
-//     <Text>Loading {route.title}…</Text>
-//   </View>
+//   <View style={[stylesTab.container, { backgroundColor: '#673ab7' }]} />
 // );
 
 // class TabViewExample extends React.Component {
@@ -295,128 +363,74 @@ HomeScreen.navigationOptions = {
 //     routes: [
 //       { key: 'first', title: 'First' },
 //       { key: 'second', title: 'Second' },
-//       {key : 'offer', title : 'Offer'}
-//     ]
+//     ],
 //   };
 
 //   _handleIndexChange = index => this.setState({ index });
 
-//   _renderLazyPlaceholder = ({ route }) => <LazyPlaceholder route={route} />;
+//   _renderTabBar = props => {
+//     const inputRange = props.navigationState.routes.map((x, i) => i);
+
+//     return (
+//       <View style={stylesTab.tabBar}>
+//         {props.navigationState.routes.map((route, i) => {
+//           var color = Animated.color(
+//             Animated.round(
+//               Animated.interpolate(props.position, {
+//                 inputRange,
+//                 outputRange: inputRange.map(inputIndex =>
+//                   inputIndex === i ? 255 : 0
+//                 ),
+//               })
+//             ),
+//             0,
+//             0
+//           );
+
+//           return (
+//             <TouchableOpacity
+//               style={stylesTab.tabItem}
+//               onPress={() => this.setState({ index: i })}>
+//               <Animated.Text 
+//               style={{ color:'brown' }}>
+//               {route.title}
+//               </Animated.Text>
+//             </TouchableOpacity>
+//           );
+//         })}
+//       </View>
+//     );
+//   };
+
+//   _renderScene = SceneMap({
+//     first: FirstRoute,
+//     second: SecondRoute,
+//   });
 
 //   render() {
 //     return (
-//      <Container>
 //       <TabView
-//         lazy
 //         navigationState={this.state}
-//         renderScene={SceneMap({
-//           first: FirstRoute,
-//           second: SecondRoute,
-//           offer: OfferRoute,
-//         })}
-//         renderLazyPlaceholder={this._renderLazyPlaceholder}
+//         renderScene={this._renderScene}
+//         renderTabBar={this._renderTabBar}
 //         onIndexChange={this._handleIndexChange}
-//         initialLayout={{ width: Dimensions.get('window').width }}
-//         style={stylesTab.container}
 //       />
-//       </Container>
 //     );
 //   }
 // }
 
 // const stylesTab = StyleSheet.create({
 //   container: {
-//     // marginTop: StatusBar.currentHeight,
+//     flex: 1,
 //   },
-//   scene: {
+//   tabBar: {
+//     flexDirection: 'row',
+//     paddingTop: 22,
+//   },
+//   tabItem: {
 //     flex: 1,
 //     alignItems: 'center',
-//     justifyContent: 'center',
+//     padding: 16,
 //   },
 // });
-
-
-const FirstRoute = () => (
-  <View style={[stylesTab.container, { backgroundColor: '#ff4081' }]} />
-);
-const SecondRoute = () => (
-  <View style={[stylesTab.container, { backgroundColor: '#673ab7' }]} />
-);
-
-class TabViewExample extends React.Component {
-  state = {
-    index: 0,
-    routes: [
-      { key: 'first', title: 'First' },
-      { key: 'second', title: 'Second' },
-    ],
-  };
-
-  _handleIndexChange = index => this.setState({ index });
-
-  _renderTabBar = props => {
-    const inputRange = props.navigationState.routes.map((x, i) => i);
-
-    return (
-      <View style={stylesTab.tabBar}>
-        {props.navigationState.routes.map((route, i) => {
-          var color = Animated.color(
-            Animated.round(
-              Animated.interpolate(props.position, {
-                inputRange,
-                outputRange: inputRange.map(inputIndex =>
-                  inputIndex === i ? 255 : 0
-                ),
-              })
-            ),
-            0,
-            0
-          );
-
-          return (
-            <TouchableOpacity
-              style={stylesTab.tabItem}
-              onPress={() => this.setState({ index: i })}>
-              <Animated.Text 
-              style={{ color }}>
-              {route.title}
-              </Animated.Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    );
-  };
-
-  _renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-  });
-
-  render() {
-    return (
-      <TabView
-        navigationState={this.state}
-        renderScene={this._renderScene}
-        renderTabBar={this._renderTabBar}
-        onIndexChange={this._handleIndexChange}
-      />
-    );
-  }
-}
-
-const stylesTab = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    paddingTop: 22,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-  },
-});
 
